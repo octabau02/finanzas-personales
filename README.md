@@ -1,16 +1,39 @@
-# React + Vite
+# Finanzas Personales
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+App de finanzas personales para gestionar ingresos, gastos y presupuesto mensual.
 
-Currently, two official plugins are available:
+## Tecnologías
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite
+- Tailwind CSS v4
+- React Router
+- Recharts (gráficos)
+- Lucide React (íconos)
+- Context API + useReducer
+- LocalStorage (persistencia)
 
-## React Compiler
+## Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Dashboard**: balance, ingresos/gastos totales, gráfico de torta por categoría, últimas transacciones
+- **Transacciones**: CRUD completo con búsqueda, modal para crear y editar
+- **Categorías**: 12 categorías predefinidas, crear/editar con color personalizado, bloqueo de eliminación si tiene transacciones
+- **Presupuesto**: monto mensual, barra de progreso, alerta si se excede, gráfico por categoría
+- **Modales de confirmación** para eliminación y reset de datos
+- **Toast** con feedback visual en cada operación
 
-## Expanding the ESLint configuration
+## Instalación
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+git clone https://github.com/octabau02/finanzas-personales.git
+cd finanzas-personales
+npm install
+npm run dev
+```
+
+## Scripts
+
+| Comando          | Descripción                    |
+| ---------------- | ------------------------------ |
+| `npm run dev`    | Dev server en `localhost:5173` |
+| `npm run build`  | Build de producción            |
+| `npm run preview`| Preview del build              |
