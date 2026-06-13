@@ -47,10 +47,24 @@ function finanzasReducer(state, action) {
       };
     case 'AGREGAR_CATEGORIA':
       return { ...state, categorias: [...state.categorias, action.payload] };
+    case 'EDITAR_TRANSACCION':
+      return {
+        ...state,
+        transacciones: state.transacciones.map((t) =>
+          t.id === action.payload.id ? { ...t, ...action.payload } : t
+        ),
+      };
     case 'ELIMINAR_CATEGORIA':
       return {
         ...state,
         categorias: state.categorias.filter((c) => c.id !== action.payload),
+      };
+    case 'EDITAR_CATEGORIA':
+      return {
+        ...state,
+        categorias: state.categorias.map((c) =>
+          c.id === action.payload.id ? { ...c, ...action.payload } : c
+        ),
       };
     case 'SET_PRESUPUESTO':
       return { ...state, presupuesto: action.payload };
@@ -74,6 +88,10 @@ export function FinanzasProvider({ children }) {
     dispatch({ type: 'ELIMINAR_TRANSACCION', payload: id });
   };
 
+  const editarTransaccion = (id, datos) => {
+    dispatch({ type: 'EDITAR_TRANSACCION', payload: { id, ...datos } });
+  };
+
   const agregarCategoria = (categoria) => {
     dispatch({
       type: 'AGREGAR_CATEGORIA',
@@ -83,6 +101,10 @@ export function FinanzasProvider({ children }) {
 
   const eliminarCategoria = (id) => {
     dispatch({ type: 'ELIMINAR_CATEGORIA', payload: id });
+  };
+
+  const editarCategoria = (id, datos) => {
+    dispatch({ type: 'EDITAR_CATEGORIA', payload: { id, ...datos } });
   };
 
   const setPresupuesto = (monto) => {
@@ -105,8 +127,10 @@ export function FinanzasProvider({ children }) {
         ...state,
         agregarTransaccion,
         eliminarTransaccion,
+        editarTransaccion,
         agregarCategoria,
         eliminarCategoria,
+        editarCategoria,
         setPresupuesto,
         totalIngresos,
         totalGastos,
