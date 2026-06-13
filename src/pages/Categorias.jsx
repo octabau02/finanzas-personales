@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFinanzas } from '../context/FinanzasContext';
 import { Plus, Trash2, Pencil, ArrowUp, ArrowDown, AlertTriangle } from 'lucide-react';
 import Modal from '../components/Modal';
+import Toast from '../components/Toast';
 
 const FORM_VACIO = { nombre: '', tipo: 'gasto', color: '#ef4444' };
 
@@ -12,6 +13,7 @@ export default function Categorias() {
   const [editandoId, setEditandoId] = useState(null);
   const [form, setForm] = useState(FORM_VACIO);
   const [eliminarModal, setEliminarModal] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const abrirCrear = () => {
     setEditandoId(null);
@@ -42,8 +44,10 @@ export default function Categorias() {
 
     if (editandoId) {
       editarCategoria(editandoId, datos);
+      setToast('Categoría actualizada');
     } else {
       agregarCategoria(datos);
+      setToast('Categoría agregada');
     }
     cerrarModal();
   };
@@ -51,6 +55,7 @@ export default function Categorias() {
   const confirmarEliminar = () => {
     if (eliminarModal) {
       eliminarCategoria(eliminarModal.id);
+      setToast('Categoría eliminada');
       setEliminarModal(null);
     }
   };
@@ -237,6 +242,8 @@ export default function Categorias() {
           </div>
         </div>
       </Modal>
+
+      {toast && <Toast mensaje={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

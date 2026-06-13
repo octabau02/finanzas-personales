@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFinanzas } from '../context/FinanzasContext';
 import { Plus, Trash2, Search, Pencil, AlertTriangle } from 'lucide-react';
 import Modal from '../components/Modal';
+import Toast from '../components/Toast';
 
 function formatMoneda(valor) {
   return new Intl.NumberFormat('es-AR', {
@@ -27,6 +28,7 @@ export default function Transacciones() {
   const [filtro, setFiltro] = useState('');
   const [form, setForm] = useState(FORM_VACIO(categorias));
   const [eliminarModal, setEliminarModal] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const abrirCrear = () => {
     setEditandoId(null);
@@ -49,6 +51,7 @@ export default function Transacciones() {
   const confirmarEliminar = () => {
     if (eliminarModal) {
       eliminarTransaccion(eliminarModal.id);
+      setToast('Transacción eliminada');
       setEliminarModal(null);
     }
   };
@@ -72,8 +75,10 @@ export default function Transacciones() {
 
     if (editandoId) {
       editarTransaccion(editandoId, datos);
+      setToast('Transacción actualizada');
     } else {
       agregarTransaccion(datos);
+      setToast('Transacción agregada');
     }
     cerrarModal();
   };
@@ -311,6 +316,8 @@ export default function Transacciones() {
           </div>
         </div>
       </Modal>
+
+      {toast && <Toast mensaje={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

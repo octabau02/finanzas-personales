@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFinanzas } from '../context/FinanzasContext';
 import { PiggyBank, AlertTriangle } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import Toast from '../components/Toast';
 
 function formatMoneda(valor) {
   return new Intl.NumberFormat('es-AR', {
@@ -15,11 +16,13 @@ export default function Presupuesto() {
   const { presupuesto, setPresupuesto, totalGastos, categorias, transacciones } = useFinanzas();
   const [editando, setEditando] = useState(false);
   const [monto, setMonto] = useState(presupuesto || '');
+  const [toast, setToast] = useState(null);
 
   const handleGuardar = (e) => {
     e.preventDefault();
     setPresupuesto(Number(monto) || 0);
     setEditando(false);
+    setToast('Presupuesto actualizado');
   };
 
   const gastosPorCategoria = categorias
@@ -164,6 +167,8 @@ export default function Presupuesto() {
           </p>
         )}
       </div>
+
+      {toast && <Toast mensaje={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }
