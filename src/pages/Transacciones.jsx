@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useFinanzas } from '../context/FinanzasContext';
-import { Plus, Trash2, Search, Pencil } from 'lucide-react';
+import { Plus, Trash2, Search, Pencil, AlertTriangle } from 'lucide-react';
 import Modal from '../components/Modal';
 
 function formatMoneda(valor) {
@@ -26,6 +26,7 @@ export default function Transacciones() {
   const [editandoId, setEditandoId] = useState(null);
   const [filtro, setFiltro] = useState('');
   const [form, setForm] = useState(FORM_VACIO(categorias));
+  const [eliminarModal, setEliminarModal] = useState(null);
 
   const abrirCrear = () => {
     setEditandoId(null);
@@ -43,6 +44,13 @@ export default function Transacciones() {
       fecha: t.fecha,
     });
     setModalAbierto(true);
+  };
+
+  const confirmarEliminar = () => {
+    if (eliminarModal) {
+      eliminarTransaccion(eliminarModal.id);
+      setEliminarModal(null);
+    }
   };
 
   const cerrarModal = () => {
@@ -140,7 +148,8 @@ export default function Transacciones() {
                       categorias.filter((c) => c.tipo === e.target.value)[0]?.id || '',
                   })
                 }
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                disabled={!!editandoId}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed"
               >
                 <option value="gasto">Gasto</option>
                 <option value="ingreso">Ingreso</option>
@@ -248,7 +257,7 @@ export default function Transacciones() {
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => eliminarTransaccion(t.id)}
+                          onClick={() => setEliminarModal(t)}
                           className="p-1 text-slate-400 hover:text-red-500 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -266,6 +275,42 @@ export default function Transacciones() {
           </p>
         )}
       </div>
+
+      <Modal
+        open={!!eliminarModal}
+        onClose={() => setEliminarModal(null)}
+        title="Eliminar transacción"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-red-800">
+                ¿Eliminar esta transacción?
+              </p>
+              {eliminarModal && (
+                <p className="text-sm text-red-700 font-medium mt-1">
+                  {eliminarModal.descripcion} · {eliminarModal.tipo === 'ingreso' ? '+' : '-'}{formatMoneda(eliminarModal.monto)}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setEliminarModal(null)}
+              className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={confirmarEliminar}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

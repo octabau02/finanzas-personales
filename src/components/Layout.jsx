@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, ArrowLeftRight, Tags, PiggyBank } from 'lucide-react';
+import { LayoutDashboard, ArrowLeftRight, Tags, PiggyBank, RotateCcw, AlertTriangle } from 'lucide-react';
+import Modal from './Modal';
 
 const links = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -9,6 +11,13 @@ const links = [
 ];
 
 export default function Layout() {
+  const [modalReset, setModalReset] = useState(false);
+
+  const resetearDatos = () => {
+    localStorage.removeItem('finanzas-data');
+    window.location.reload();
+  };
+
   return (
     <div className="flex h-screen bg-slate-50">
       <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
@@ -36,8 +45,15 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-100 text-xs text-slate-400 text-center">
-          Finanzas Personales v1.0
+        <div className="p-4 border-t border-slate-100 text-xs text-slate-400 text-center space-y-1">
+          <p>Finanzas Personales v1.0</p>
+          <button
+            onClick={() => setModalReset(true)}
+            className="text-slate-400 hover:text-red-500 transition-colors inline-flex items-center gap-1"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Reset
+          </button>
         </div>
       </aside>
       <main className="flex-1 overflow-auto">
@@ -45,6 +61,35 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+
+      <Modal
+        open={modalReset}
+        onClose={() => setModalReset(false)}
+        title="Resetear datos"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-800">
+              Esta acción eliminará todas tus transacciones y categorías personalizadas. Los datos volverán a su estado de fábrica. Esta acción no se puede deshacer.
+            </p>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setModalReset(false)}
+              className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={resetearDatos}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+            >
+              Resetear todo
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

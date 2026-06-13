@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useFinanzas } from '../context/FinanzasContext';
-import { Plus, Trash2, Pencil, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Trash2, Pencil, ArrowUp, ArrowDown, AlertTriangle } from 'lucide-react';
 import Modal from '../components/Modal';
 
 const FORM_VACIO = { nombre: '', tipo: 'gasto', color: '#ef4444' };
@@ -11,6 +11,7 @@ export default function Categorias() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [editandoId, setEditandoId] = useState(null);
   const [form, setForm] = useState(FORM_VACIO);
+  const [eliminarModal, setEliminarModal] = useState(null);
 
   const abrirCrear = () => {
     setEditandoId(null);
@@ -47,6 +48,13 @@ export default function Categorias() {
     cerrarModal();
   };
 
+  const confirmarEliminar = () => {
+    if (eliminarModal) {
+      eliminarCategoria(eliminarModal.id);
+      setEliminarModal(null);
+    }
+  };
+
   const tieneTransacciones = (categoriaId) =>
     transacciones.some((t) => t.categoria === categoriaId);
 
@@ -69,7 +77,7 @@ export default function Categorias() {
             <Pencil className="w-4 h-4" />
           </button>
           <button
-            onClick={() => eliminarCategoria(c.id)}
+            onClick={() => setEliminarModal(c)}
             disabled={bloqueada}
             className={`p-1 transition-colors ${
               bloqueada
@@ -126,7 +134,8 @@ export default function Categorias() {
                   color: e.target.value === 'gasto' ? '#ef4444' : '#22c55e',
                 })
               }
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+              disabled={!!editandoId}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed"
             >
               <option value="gasto">Gasto</option>
               <option value="ingreso">Ingreso</option>
@@ -192,6 +201,42 @@ export default function Categorias() {
           </div>
         </div>
       </div>
+
+      <Modal
+        open={!!eliminarModal}
+        onClose={() => setEliminarModal(null)}
+        title="Eliminar categoría"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-red-800">
+                ¿Eliminar esta categoría?
+              </p>
+              {eliminarModal && (
+                <p className="text-sm text-red-700 font-medium mt-1">
+                  {eliminarModal.nombre} ({eliminarModal.tipo === 'gasto' ? 'Gasto' : 'Ingreso'})
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setEliminarModal(null)}
+              className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={confirmarEliminar}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
